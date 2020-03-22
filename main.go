@@ -38,10 +38,11 @@ func main() {
 	r.NotFoundHandler = notFoundHandler()
 
 	fs := http.FileServer(http.Dir("./public"))
-	http.Handle("/public/", http.StripPrefix("/public/", fs))
+	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", fs))
 
 	r.HandleFunc("/", controllers.Index)
 	r.HandleFunc("/signup", controllers.SignUp)
+	r.HandleFunc("/signin", controllers.SignIn)
 
-	log.Fatal(http.ListenAndServe(":8000", r))
+	log.Fatal(http.ListenAndServe(":3001", r))
 }

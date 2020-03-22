@@ -9,7 +9,7 @@ import (
 )
 
 func serveTemplate(w http.ResponseWriter, r *http.Request, view string, data interface{}) {
-	lp := filepath.Join("views", "layout.tmpl")
+	lp := filepath.Join("views", "layout.html")
 	fp := filepath.Join("views", view)
 
 	// Return a 404 if the template doesn't exist
