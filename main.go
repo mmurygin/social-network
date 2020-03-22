@@ -41,6 +41,7 @@ func main() {
 	http.Handle("/public/", http.StripPrefix("/public/", fs))
 
 	r.HandleFunc("/", controllers.Index)
+	r.HandleFunc("/signup", controllers.SignUp)
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
