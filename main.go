@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/mmurygin/social-network/controllers"
+	_ "github.com/mmurygin/social-network/data"
 )
 
 func loggingMiddleware(next http.Handler) http.Handler {
