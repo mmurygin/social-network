@@ -8,9 +8,11 @@ import (
 	"os"
 )
 
-var db sql.DB
+var db *sql.DB
 
 func init() {
+	var err error
+
 	connectionStr := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s",
 		os.Getenv("DB_USER"),
@@ -20,7 +22,7 @@ func init() {
 		os.Getenv("DB_NAME"),
 	)
 
-	db, err := sql.Open("mysql", connectionStr)
+	db, err = sql.Open("mysql", connectionStr)
 	if err != nil {
 		log.Panic(err)
 	}

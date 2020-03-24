@@ -44,6 +44,7 @@ func main() {
 	r.HandleFunc("/", controllers.Index)
 	r.HandleFunc("/signup", controllers.SignUp)
 	r.HandleFunc("/signin", controllers.SignIn)
+	r.HandleFunc("/users", controllers.CreateUser).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":3001", r))
 }
