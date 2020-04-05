@@ -1,11 +1,19 @@
 package controllers
 
 import (
+	"github.com/mmurygin/social-network/data"
 	"net/http"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	serveTemplate(w, r, "index.html", nil)
+	users, err := data.Users()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	serveTemplate(w, r, "index.html", users)
 }
 
 func SignUp(w http.ResponseWriter, r *http.Request) {

@@ -37,3 +37,24 @@ func (user *User) Create() error {
 
 	return err
 }
+
+func Users() (users []User, err error) {
+	rows, err := db.Query("SELECT id, name, surname, city FROM users")
+
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		user := User{}
+		if err = rows.Scan(&user.Id, &user.Name, &user.Surname, &user.City); err != nil {
+			return
+		}
+
+		users = append(users, user)
+	}
+
+	rows.Close()
+
+	return
+}

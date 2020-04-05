@@ -1,5 +1,15 @@
 {{ define "content" }}
 
-<h1> This is index content <h1>
+{{ range . }}
+  <div class="card" style="margin-bottom: 8px">
+    <div class="card-header">
+      {{ .Name }} {{ .Surname }}
+    </div>
+    <div class="card-body">
+      <p class="card-text">{{ .City }}</p>
+      <a href="/api/users/{{ .Id }}" class="btn btn-primary">View More</a>
+    </div>
+  </div>
+{{ end }}
 
 {{ end }}
