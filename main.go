@@ -22,7 +22,7 @@ func authMiddleware(next http.Handler) http.Handler {
 		if token != "" {
 			next.ServeHTTP(w, r)
 		} else {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		}
 	})
 }
@@ -35,7 +35,6 @@ func main() {
 	r := mux.NewRouter()
 
 	r.Use(loggingMiddleware)
-	// r.Use(authMiddleware)
 	r.NotFoundHandler = notFoundHandler()
 
 	fs := http.FileServer(http.Dir("./public"))
@@ -44,7 +43,19 @@ func main() {
 	r.HandleFunc("/", controllers.Index)
 	r.HandleFunc("/signup", controllers.SignUp)
 	r.HandleFunc("/signin", controllers.SignIn)
-	r.HandleFunc("/users", controllers.CreateUser).Methods("POST")
+
+	apiRouter := r.PathPrefix("/api").Subrouter()
+	initApiRouter(apiRouter)
 
 	log.Fatal(http.ListenAndServe(":3001", r))
+}
+
+func testHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("this is test handler"))
+}
+
+func initApiRouter(apiRouter *mux.Router) {
+	apiRouter.Use(authMiddleware)
+	apiRouter.HandleFunc("/users", controllers.CreateUser).Methods("POST")
+	apiRouter.HandleFunc("/test", testHandler)
 }
