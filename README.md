@@ -7,9 +7,10 @@ The goal is to learn golang
 
 1. Install dependencies
     ```bash
-    go get ./...
+    make init
     ```
+
 1. Run web server
     ```bash
-    go run main.go
+    make run
     ```
