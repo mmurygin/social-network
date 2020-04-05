@@ -1,0 +1,36 @@
+  {{ define "content" }}
+
+  <table class="table">
+    <tbody>
+      <tr>
+        <td>Email: </td>
+        <td>{{ .Email }}</td>
+      </tr>
+      <tr>
+        <td>Name: </td>
+        <td>{{ .Name }}</td>
+      </tr>
+      <tr>
+        <td>Surname: </td>
+        <td>{{ .Surname}}</td>
+      </tr>
+      <tr>
+        <td>Age: </td>
+        <td>{{ .Age }}</td>
+      </tr>
+      <tr>
+        <td>Gender: </td>
+        <td>{{ .Gender }}</td>
+      </tr>
+      <tr>
+        <td>Interests: </td>
+        <td>{{ .Interests }}</td>
+      </tr>
+      <tr>
+        <td>City: </td>
+        <td>{{ .City }}</td>
+      </tr>
+  </tbody>
+</table>
+
+{{ end }}

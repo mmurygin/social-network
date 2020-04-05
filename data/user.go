@@ -2,6 +2,7 @@ package data
 
 import (
 	_ "github.com/gorilla/schema"
+	"log"
 	"time"
 )
 
@@ -39,7 +40,8 @@ func (user *User) Create() error {
 }
 
 func Users() (users []User, err error) {
-	rows, err := db.Query("SELECT id, name, surname, city FROM users")
+	rows, err := db.Query(
+		"SELECT id, name, surname, city FROM users order by createdAt desc")
 
 	if err != nil {
 		return
@@ -57,4 +59,21 @@ func Users() (users []User, err error) {
 	rows.Close()
 
 	return
+}
+
+func QueryUser(id int) (*User, error) {
+	log.Println("Query User")
+	row := db.QueryRow(`
+		SELECT id, email, name, surname, age, gender, interests, city
+		FROM users
+		WHERE id = ?;`, id)
+
+	// err = row.Scan(&user.Id, &user.Email, &user.Name, &user.Surname, &user.Age,
+	// 	&user.Gender, &user.Interests, &user.City)
+
+	user := User{}
+	err := row.Scan(&user.Id, &user.Email, &user.Name, &user.Surname, &user.Age,
+		&user.Gender, &user.Interests, &user.City)
+
+	return &user, err
 }
