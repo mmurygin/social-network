@@ -45,23 +45,30 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 func SignIn(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		serveTemplate(w, r, "signin.html", nil)
-	} else {
-		email := r.PostFormValue("email")
-		password := r.PostFormValue("password")
-
-		userId, err := data.CheckAndQueryUser(email, password)
-
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
-
-		err = auth.StoreSession(w, userId)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
+
+	email := r.PostFormValue("email")
+	password := r.PostFormValue("password")
+
+	userId, err := data.CheckAndQueryUser(email, password)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	err = auth.StoreSession(w, userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func SignOut(w http.ResponseWriter, r *http.Request) {
+	auth.CleanSession(w)
+
+	http.Redirect(w, r, "/signin", http.StatusSeeOther)
 }

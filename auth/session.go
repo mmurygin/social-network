@@ -53,7 +53,6 @@ func StoreSession(w http.ResponseWriter, userId int) error {
 		Expires: expiresAt,
 	}
 
-	log.Println("store cookie", cookie)
 	http.SetCookie(w, &cookie)
 
 	return nil
@@ -74,4 +73,15 @@ func GetSession(r *http.Request) (int, error) {
 	} else {
 		return 0, err
 	}
+}
+
+func CleanSession(w http.ResponseWriter) {
+	cookie := http.Cookie{
+		Name:    cookieName,
+		Value:   "",
+		MaxAge:  0,
+		Expires: time.Now(),
+	}
+
+	http.SetCookie(w, &cookie)
 }

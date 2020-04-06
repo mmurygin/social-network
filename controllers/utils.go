@@ -36,7 +36,6 @@ func serveTemplate(w http.ResponseWriter, r *http.Request, view string, model in
 		return
 	}
 
-	log.Println(r.Context())
 	user := r.Context().Value("user")
 	log.Println("user:", user)
 	data := struct {

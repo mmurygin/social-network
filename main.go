@@ -54,6 +54,7 @@ func main() {
 
 	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", fs))
 	r.HandleFunc("/signup", controllers.SignUp)
+	r.HandleFunc("/signout", controllers.SignOut)
 	r.HandleFunc("/signin", controllers.SignIn).Methods("GET", "POST")
 	r.HandleFunc("/users", controllers.CreateUser).Methods("POST")
 
