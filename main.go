@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -9,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mmurygin/social-network/auth"
 	"github.com/mmurygin/social-network/controllers"
-	_ "github.com/mmurygin/social-network/data"
+	"github.com/mmurygin/social-network/data"
 )
 
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -18,14 +19,24 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := auth.GetSession(r)
+		userId, err := auth.GetSession(r)
 
-		if err == nil {
-			next.ServeHTTP(w, r)
-		} else {
+		if err != nil {
 			log.Println(err)
 			http.Redirect(w, r, "/signin", http.StatusSeeOther)
+			return
 		}
+
+		user, err := data.QueryUser(userId)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		newContext := context.WithValue(r.Context(), "user", user)
+		r = r.WithContext(newContext)
+
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -40,8 +51,8 @@ func main() {
 	r.NotFoundHandler = notFoundHandler()
 
 	fs := http.FileServer(http.Dir("./public"))
-	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", fs))
 
+	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", fs))
 	r.HandleFunc("/signup", controllers.SignUp)
 	r.HandleFunc("/signin", controllers.SignIn).Methods("GET", "POST")
 	r.HandleFunc("/users", controllers.CreateUser).Methods("POST")

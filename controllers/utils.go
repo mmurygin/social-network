@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-func serveTemplate(w http.ResponseWriter, r *http.Request, view string, data interface{}) {
+func serveTemplate(w http.ResponseWriter, r *http.Request, view string, model interface{}) {
 	lp := filepath.Join("views", "layout.html")
 	fp := filepath.Join("views", view)
 
@@ -34,6 +34,17 @@ func serveTemplate(w http.ResponseWriter, r *http.Request, view string, data int
 		// Return a generic "Internal Server Error" message
 		http.Error(w, http.StatusText(500), 500)
 		return
+	}
+
+	log.Println(r.Context())
+	user := r.Context().Value("user")
+	log.Println("user:", user)
+	data := struct {
+		Model interface{}
+		User  interface{}
+	}{
+		model,
+		user,
 	}
 
 	err = tmpl.ExecuteTemplate(w, "layout", data)
