@@ -9,16 +9,18 @@ import (
 	"time"
 )
 
-var sessionSecret string
+var sessionSecret []byte
 
 const cookieName = "X-Session-Token"
 
 func init() {
-	sessionSecret = os.Getenv("sessionSecret")
+	strSecret := os.Getenv("SESSION_SECRET")
 
-	if sessionSecret == "" {
+	if strSecret == "" {
 		log.Panic(errors.New("sessionSecret is not provided"))
 	}
+
+	sessionSecret = []byte(strSecret)
 }
 
 type Token struct {
@@ -27,11 +29,12 @@ type Token struct {
 }
 
 func StoreSession(w http.ResponseWriter, userId int) error {
+	log.Println("Store session")
 	expiresAt := time.Now().Add(time.Hour)
 
 	claims := Token{
-		UserId: userId,
-		StandardClaims: jwt.StandardClaims{
+		userId,
+		jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
 		},
 	}
@@ -40,6 +43,7 @@ func StoreSession(w http.ResponseWriter, userId int) error {
 	tokenString, err := token.SignedString(sessionSecret)
 
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -49,6 +53,7 @@ func StoreSession(w http.ResponseWriter, userId int) error {
 		Expires: expiresAt,
 	}
 
+	log.Println("store cookie", cookie)
 	http.SetCookie(w, &cookie)
 
 	return nil

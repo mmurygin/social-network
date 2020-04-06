@@ -1,6 +1,7 @@
 package data
 
 import (
+	"errors"
 	_ "github.com/gorilla/schema"
 	"log"
 	"time"
@@ -63,17 +64,42 @@ func Users() (users []User, err error) {
 
 func QueryUser(id int) (*User, error) {
 	log.Println("Query User")
+
 	row := db.QueryRow(`
 		SELECT id, email, name, surname, age, gender, interests, city
 		FROM users
 		WHERE id = ?;`, id)
-
-	// err = row.Scan(&user.Id, &user.Email, &user.Name, &user.Surname, &user.Age,
-	// 	&user.Gender, &user.Interests, &user.City)
 
 	user := User{}
 	err := row.Scan(&user.Id, &user.Email, &user.Name, &user.Surname, &user.Age,
 		&user.Gender, &user.Interests, &user.City)
 
 	return &user, err
+}
+
+func CheckAndQueryUser(email string, password string) (int, error) {
+	log.Println("Query User")
+
+	row := db.QueryRow(`
+		SELECT id, password
+		FROM users
+		WHERE email = ?;`, email)
+
+	user := User{}
+	log.Println("Before scan")
+	err := row.Scan(&user.Id, &user.Password)
+
+	if err != nil {
+		log.Println("Scan error")
+		log.Println(err)
+		return 0, err
+	}
+
+	log.Println("Compare passwords")
+	if user.Password == password {
+		return user.Id, nil
+	} else {
+		log.Println("Compare failed")
+		return 0, errors.New("Can not find user with such email and password")
+	}
 }
