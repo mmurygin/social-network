@@ -22,7 +22,7 @@ func auth(next http.Handler) http.Handler {
 		if token != "" {
 			next.ServeHTTP(w, r)
 		} else {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			http.Redirect(w, r, "/signin", http.StatusSeeOther)
 		}
 	})
 }
@@ -40,11 +40,14 @@ func main() {
 	fs := http.FileServer(http.Dir("./public"))
 	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", fs))
 
-	r.HandleFunc("/", controllers.Index)
 	r.HandleFunc("/signup", controllers.SignUp)
 	r.HandleFunc("/signin", controllers.SignIn)
 	r.HandleFunc("/users", controllers.CreateUser).Methods("POST")
-	r.HandleFunc("/users/{id:[0-9]+}", controllers.ViewUser)
+
+	secRoutes := r.PathPrefix("/").Subrouter()
+	secRoutes.Use(auth)
+	secRoutes.HandleFunc("/", controllers.Index)
+	secRoutes.HandleFunc("/users/{id:[0-9]+}", controllers.ViewUser)
 
 	log.Fatal(http.ListenAndServe(":3001", r))
 }
