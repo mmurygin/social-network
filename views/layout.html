@@ -29,7 +29,7 @@
           <ul class="navbar-nav">
             {{ if .User }}
             <li class="nav-item">
-              <a class="nav-link" href="/users/{{ .User.id }}">{{ .User.Name }}</a>
+              <a class="nav-link" href="/users/{{ .User.Id }}">{{ .User.Name }} {{ .User.Surname }}</a>
             </li>
             {{ end }}
             <li class="nav-item">

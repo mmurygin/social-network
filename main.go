@@ -29,7 +29,8 @@ func authMiddleware(next http.Handler) http.Handler {
 
 		user, err := data.QueryUser(userId)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Println(err)
+			http.Redirect(w, r, "/signin", http.StatusSeeOther)
 			return
 		}
 

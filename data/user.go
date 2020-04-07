@@ -1,8 +1,8 @@
 package data
 
 import (
-	"errors"
 	_ "github.com/gorilla/schema"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"time"
 )
@@ -22,6 +22,15 @@ type User struct {
 }
 
 func (user *User) Create() error {
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(user.Password), bcrypt.DefaultCost)
+
+	if err != nil {
+		return err
+	}
+
+	user.Password = string(hashedPassword)
+
 	statement := `
 		INSERT INTO
 		users (email, password, name, surname, age, gender, interests, city)
@@ -96,10 +105,10 @@ func CheckAndQueryUser(email string, password string) (int, error) {
 	}
 
 	log.Println("Compare passwords")
-	if user.Password == password {
-		return user.Id, nil
-	} else {
-		log.Println("Compare failed")
-		return 0, errors.New("Can not find user with such email and password")
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return 0, err
 	}
+
+	return user.Id, nil
 }
