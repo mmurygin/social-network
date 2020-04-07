@@ -23,20 +23,20 @@
           <span class="navbar-toggler-icon"></span>
         </button>
 
+        {{ if .User }}
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
           <ul class="navbar-nav mr-auto">
           </ul>
           <ul class="navbar-nav">
-            {{ if .User }}
             <li class="nav-item">
               <a class="nav-link" href="/users/{{ .User.Id }}">{{ .User.Name }} {{ .User.Surname }}</a>
             </li>
-            {{ end }}
             <li class="nav-item">
               <a class="nav-link btn btn-outline-danger" href="/signout">Sign Out</a>
             </li>
           </ul>
         </div>
+        {{ end }}
       </div>
     </nav>
     {{ end }}
