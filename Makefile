@@ -4,14 +4,11 @@ build:
 	packer build infra/build.json
 
 # local development
-local-env:
-	. .local-env
-
-local-init:
+init:
 	go get ./...
 
-local-run: local-env
+run:
 	go run main.go
 
-gin: local-env
+gin:
 	gin -b tmp/ginbin run main.go
