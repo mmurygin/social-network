@@ -1,0 +1,25 @@
+{
+  "variables": {
+      "gcp_project": "{{ env `GCP_PROJECT` }}",
+      "gcp_zone": "{{ env `GCP_ZONE` }}"
+  },
+  "builders": [
+    {
+      "type": "googlecompute",
+      "project_id": "{{ user `gcp_project` }}",
+      "zone": "{{ user `gcp_zone` }}",
+      "source_image": "centos-7-v20200403",
+      "source_image_family": "centos-7",
+      "image_name": "social-network-{{timestamp}}",
+      "image_family": "social-network",
+      "disk_size": 20,
+      "ssh_username": "packer"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": ["echo foo"]
+    }
+  ]
+}

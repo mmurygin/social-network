@@ -1,10 +1,17 @@
 include .env
 
-init:
+build:
+	packer build infra/build.json
+
+# local development
+local-env:
+	. .local-env
+
+local-init:
 	go get ./...
 
-run:
+local-run: local-env
 	go run main.go
 
-gin:
+gin: local-env
 	gin -b tmp/ginbin run main.go
